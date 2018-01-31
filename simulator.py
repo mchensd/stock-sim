@@ -23,7 +23,7 @@ class Main(Frame):
         self.tFrame = Frame(self, bg="#9da6b5")  # title frame
         self.tFrame.grid(columnspan=2, sticky=N, pady=15)        
 
-        self.title = Label(self.tFrame, text="Welcome to Drug Simulator", font=("Courier New", 24, "bold"), bg="#9da6b5")
+        self.title = Label(self.tFrame, text="Welcome to Stock Market Simulator", font=("Courier New", 24, "bold"), bg="#9da6b5")
         self.title.grid(sticky=W+E, padx=20, pady=10)
 
         self.mLabel = Label(self.tFrame, text="Your money: {}".format(self.money), font=self.normFont, bg="#9da6b5")
@@ -59,12 +59,12 @@ class Main(Frame):
             messagebox.showwarning(title="Message", message="You have 5 days left!")
 
         elif self.days == 0:
-            messagebox.showinfo(title="Congratulations!", message="You completed the drug dealer challenge with {} dollars".format(self.money))
+            messagebox.showinfo(title="Congratulations!", message="You completed the stock broker dealer challenge with {} dollars".format(self.money))
             self.deactivate()
             
-        if self.menu.drugMenu.curselection():  # deselect any current selections
-            i = self.menu.drugMenu.curselection()[0]
-            self.menu.drugMenu.selection_clear(first=i)
+        if self.menu.stockMenu.curselection():  # deselect any current selections
+            i = self.menu.stockMenu.curselection()[0]
+            self.menu.stockMenu.selection_clear(first=i)
         elif self.inv.inventory.curselection():
             i = self.inv.inventory.curselection()[0]
             self.inv.inventory.selection_clear(first=i)
@@ -73,19 +73,19 @@ class Main(Frame):
         #change prices
         self.menu.updatePrices()
 
-    def purchase(self, drugI, amount, cost):
+    def purchase(self, stockI, amount, cost):
         # called by self.menu when buy it is pressed
-        self.inv.userInv[drugI] += amount
+        self.inv.userInv[stockI] += amount
         self.money -= cost
         
         self.mLabel['text'] = "Your money: {}".format(self.money)
-        self.inv.amounts.delete(drugI)
-        self.inv.amounts.insert(drugI, self.inv.userInv[drugI])
+        self.inv.amounts.delete(stockI)
+        self.inv.amounts.insert(stockI, self.inv.userInv[stockI])
         
         
-    def sell(self, drugI, amount):
+    def sell(self, stockI, amount):
         # called by self.in when sell it is pressed
-        cost = self.menu.prices[drugI] * amount
+        cost = self.menu.prices[stockI] * amount
         self.money += cost
         self.mLabel['text'] = "Your money: {}".format(self.money)
 
@@ -101,7 +101,7 @@ class BuyMenu(Frame):
         self.master=master
         self.grid(padx=50)  # separates it from sell menu
         
-        self.drugList = ["Weed", "Shrooms", "Heroin", "Cocaine", "Crack", "Acid", "Opium", "Speed"]
+        self.stockList = ["Bitcoin", "Apple", "Microsoft", "Tesla", "Google", "Facebook", "Snapchat", "Amazon"]
         self.createWidgets()
         #self.grid_propagate(0)
 
@@ -112,11 +112,11 @@ class BuyMenu(Frame):
         self.menuTitle.grid(row=0, column=0)
         
 
-        self.drugMenu = Listbox(self, height=8, selectmode=SINGLE, activestyle="none", font=self.menuFont,width=17)
-        self.drugMenu.grid(row=1, column=0, padx=5, pady=(3,10))
+        self.stockMenu = Listbox(self, height=8, selectmode=SINGLE, activestyle="none", font=self.menuFont,width=17)
+        self.stockMenu.grid(row=1, column=0, padx=5, pady=(3,10))
 
-        for d in self.drugList:
-            self.drugMenu.insert(END, d)
+        for d in self.stockList:
+            self.stockMenu.insert(END, d)
 
         self.pTitle = Label(self, text="Prices", font=("Courier New", 12, "underline"))
         self.pTitle.grid(row=0, column=1)
@@ -125,7 +125,7 @@ class BuyMenu(Frame):
                               font=self.menuFont, width=10)
         self.priceList.grid(row=1, column=1, pady=(3,10))
 
-        self.buy = Button(self, text="Buy it!", command=self.buyDrugs)
+        self.buy = Button(self, text="Buy it!", command=self.buystocks)
         self.buy.grid(row=2, column=0, columnspan=2)
 
     def updatePrices(self):
@@ -135,31 +135,31 @@ class BuyMenu(Frame):
         
     def generatePrices(self):
         
-        weed = random.randint(200,700)
-        shrooms = random.randint(400,1000)
-        heroin = random.randint(2013, 7692)
-        cocaine = random.randint(10234, 18290)
-        crack = random.randint(3500,7690)
-        acid = random.randint(567, 1403)
-        opium = random.randint(3251, 7882)
-        speed = random.randint(67,315)
+        a = random.randint(200,700)
+        b = random.randint(400,1000)
+        c = random.randint(2013, 7692)
+        d = random.randint(10234, 18290)
+        e = random.randint(3500,7690)
+        f = random.randint(567, 1403)
+        g = random.randint(3251, 7882)
+        h = random.randint(67,315)
         #TODO: anomalies
         
-        return [weed, shrooms, heroin, cocaine, crack, acid, opium, speed]
+        return [a,b,c,d,e,f,g,h]
 
-    def buyDrugs(self):
-        try: drugI = self.drugMenu.curselection()[0]  # checks if the user selected a drug
+    def buystocks(self):
+        try: stockI = self.stockMenu.curselection()[0]  # checks if the user selected a stock
         except:
-            messagebox.showwarning(title="Error", message="Please select a drug to buy")
+            messagebox.showwarning(title="Error", message="Please select a stock to buy")
             return
 
-        w = PopupInput(self.master, money=self.master.money, drug=self.drugList[drugI], drugPrice = self.prices[drugI], buy=True, )
+        w = PopupInput(self.master, money=self.master.money, stock=self.stockList[stockI], stockPrice = self.prices[stockI], buy=True, )
         # Asks for how much the user wants to buy
         self.master.wait_window(w.top)
         try:
             amount = w.amount
-            cost = amount*self.prices[drugI]
-            self.master.purchase(drugI, amount, cost)  # updates money AND inventory
+            cost = amount*self.prices[stockI]
+            self.master.purchase(stockI, amount, cost)  # updates money AND inventory
         except:  # if cancel is pressed, w.amount is not set
             return
         
@@ -172,7 +172,7 @@ class Inventory(Frame):
         Frame.__init__(self, master, bg="#9da6b5")# width=200, height=200, bg="#00ffff")
         self.grid(padx=50)
         
-        self.drugList = ["Weed", "Shrooms", "Heroin", "Cocaine", "Crack", "Acid", "Opium", "Speed"]
+        self.stockList = ["Bitcoin", "Apple", "Microsoft", "Tesla", "Google", "Facebook", "Snapchat", "Amazon"]
         self.userInv = [0 for i in range(8)]
 
         
@@ -188,7 +188,7 @@ class Inventory(Frame):
         self.inventory = Listbox(self, height=0, font=self.menuFont, width=18, activestyle="none")
         self.inventory.grid(row=1, column=0, padx=5, pady=(3,10))
         
-        for i in self.drugList:
+        for i in self.stockList:
             self.inventory.insert(END, i)
 
         Label(self, text="Amounts", font=("Courier New", 12, "underline")).grid(row=0, column=1)
@@ -198,27 +198,27 @@ class Inventory(Frame):
         for i in range(8):
             self.amounts.insert(END, 0)
 
-        self.sell = Button(self, text="Sell it!", command=self.sellDrugs)
+        self.sell = Button(self, text="Sell it!", command=self.sellstocks)
         self.sell.grid(row=2, column=0, columnspan=2)
 
         
-    def sellDrugs(self):
+    def sellstocks(self):
         try: # check if user selected something
-            drugI = self.inventory.curselection()[0]
+            stockI = self.inventory.curselection()[0]
         except:
-            messagebox.showerror(title="Error", message="Please select a drug to sell")
+            messagebox.showerror(title="Error", message="Please select a stock to sell")
             return
 
-        w = PopupInput(self.master, self.master.money, self.drugList[drugI], self.master.menu.prices[drugI], buy=False, drugI=drugI)
+        w = PopupInput(self.master, self.master.money, self.stockList[stockI], self.master.menu.prices[stockI], buy=False, stockI=stockI)
         self.master.wait_window(w.top)
         try:
             numSell = w.amount
-            self.master.sell(drugI, numSell)  # updates the amount of mmoney
+            self.master.sell(stockI, numSell)  # updates the amount of mmoney
 
-            #updates the amount of drugs in inventory
-            self.userInv[drugI] -= numSell
-            self.amounts.delete(drugI)
-            self.amounts.insert(drugI, self.userInv[drugI])
+            #updates the amount of stocks in inventory
+            self.userInv[stockI] -= numSell
+            self.amounts.delete(stockI)
+            self.amounts.insert(stockI, self.userInv[stockI])
         
         except:
             return
@@ -226,22 +226,22 @@ class Inventory(Frame):
 
 
 class PopupInput(Frame):
-    def __init__(self, master, money, drug, drugPrice, buy=True, drugI=None):
+    def __init__(self, master, money, stock, stockPrice, buy=True, stockI=None):
         # if buy is true, user is buying, else user is selling
         Frame.__init__(self, master)
         self.grid()
         self.master = master
         
         okayCommand = (self.register(self.isOkay), "%S")
-        self.drugI = drugI
+        self.stockI = stockI
         
         self.money = money
-        self.drug = drug
-        self.drugPrice = drugPrice
+        self.stock = stock
+        self.stockPrice = stockPrice
         self.defFont = ("Courier New", 12)
         self.bOrS = "buy" if buy else "sell"
         self.top = Toplevel(master)
-        self.howMuch = Label(self.top, text="How much {} would you like to {}?".format(drug, self.bOrS), font=self.defFont)
+        self.howMuch = Label(self.top, text="How much {} stock would you like to {}?".format(stock, self.bOrS), font=self.defFont)
         self.howMuch.grid(padx=20, pady=(5,0), columnspan=2)
 
         self.userInp = Entry(self.top, font=self.defFont, validate='key', validatecommand=okayCommand)
@@ -249,9 +249,9 @@ class PopupInput(Frame):
         self.userInp.grid(columnspan=2)
     
         if buy:
-            self.userInp.insert(0, self.money // self.drugPrice)
+            self.userInp.insert(0, self.money // self.stockPrice)
         elif not buy:
-            self.userInp.insert(0, self.master.inv.userInv[drugI])
+            self.userInp.insert(0, self.master.inv.userInv[stockI])
         
 
         self.ok = Button(self.top, text="Ok", font=self.defFont, command=self.confirmOrder)
@@ -262,23 +262,23 @@ class PopupInput(Frame):
 
     def confirmOrder(self):
         if self.bOrS == "buy":
-            if int(self.userInp.get()) * self.drugPrice > self.master.money:
-                messagebox.showerror(title="Error!", message="You do not have enough money to buy that much {}".format(self.drug))
+            if int(self.userInp.get()) * self.stockPrice > self.master.money:
+                messagebox.showerror(title="Error!", message="You do not have enough money to buy that much {} stock".format(self.stock))
 
             else:
                 self.amount = int(self.userInp.get())
-                if messagebox.askokcancel(title="Are you sure?", message="Do you want to buy {} {} for {} dollars?".format(self.amount, self.drug,
-                                                                                                                           self.amount*self.drugPrice)):
+                if messagebox.askokcancel(title="Are you sure?", message="Do you want to buy {} {} stock for {} dollars?".format(self.amount, self.stock,
+                                                                                                                           self.amount*self.stockPrice)):
                     self.destroy()
 
         elif self.bOrS == "sell":
-            if int(self.userInp.get()) > self.master.inv.userInv[self.drugI]:
-                messagebox.showerror(title="Error", message="You do not have that much of {}".format(self.drug))
+            if int(self.userInp.get()) > self.master.inv.userInv[self.stockI]:
+                messagebox.showerror(title="Error", message="You do not have that much of {} stock".format(self.stock))
 
             else:
                 self.amount = int(self.userInp.get())
-                if messagebox.askokcancel(title="Are you sure?", message="Do you want to sell {} {} for {} dollars?".format(self.amount, self.drug,
-                                                                                                                          self.amount*self.drugPrice)):
+                if messagebox.askokcancel(title="Are you sure?", message="Do you want to sell {} {} stock for {} dollars?".format(self.amount, self.stock,
+                                                                                                                          self.amount*self.stockPrice)):
                     self.destroy()
 				
     def isOkay(self, what):
