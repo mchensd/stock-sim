@@ -1,3 +1,4 @@
 # Stock Market Simulator
-Stock Market Simulator (clean version)
-Made with python 3 tkinter
+Game made with Python 3 Tkinter: Buy and sell stocks everyday to maximize profits!
+
+
